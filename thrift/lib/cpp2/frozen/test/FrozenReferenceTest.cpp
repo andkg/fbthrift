@@ -42,7 +42,10 @@ std::unique_ptr<Node> makeNode(int64_t id, const std::string& content) {
 void fillTree(std::unique_ptr<Node>& node, int min, int max) {
   if (min >= max)
     return;
-  int mid = (max + min) / 2;
+  // Ensure midpoint calculation does not overflow -
+  // the comparison is this way because this check must also not overflow.
+  assert(std::numeric_limits<int>::max() - min > max);
+  const int mid = (min + max) / 2;
   node = std::make_unique<Node>();
   *node->id_ref() = mid;
   fillTree(node->left, min, mid);
